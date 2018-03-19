@@ -1,0 +1,30 @@
+{
+  "name": "time-tracker",
+  "version": "0.1.0",
+  "main": "electronStarter.js",
+  "private": true,
+  "dependencies": {
+    "moment": "^2.21.0",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-redux": "^5.0.7",
+    "react-scripts": "1.1.1",
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0"
+  },
+  "scripts": {
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "electron": "electron .",
+    "react-start": "BROWSER=none $(npm bin)/react-scripts start",
+    "start": "concurrently \"npm run react-start\" \"wait-on http://localhost:3000/ && npm run electron\""
+  },
+  "devDependencies": {
+    "concurrently": "^3.5.1",
+    "electron": "^1.8.4",
+    "redux-immutable-state-invariant": "^2.1.0",
+    "redux-mock-store": "^1.5.1",
+    "wait-on": "^2.1.0"
+  }
+}

@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+.App-logo {
+  color: white;
+}
+
+.App-header {
+  background-color: rgb(6, 119, 153);
+  height: 30px;
+  padding: 20px;
+  color: white;
+}
+.App-main{
+  border: 0 auto;
+  text-align: center
+}
+.App-title {
+  font-size: 1.5em;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
