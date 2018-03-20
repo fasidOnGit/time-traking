@@ -6,25 +6,43 @@ let working = false;
 
 let span = document.getElementById("timer");
 ipcRenderer.on("timer-start", (event, args)=>{
-    let time=args.timer.hours+":"+args.timer.seconds;
+    let time=args.timer.hours+":"+args.timer.minutes;
     ReactDOM.render(
        time ,span
     );
-    let src;
     working = args.working;
-    if(args.working){
+    renderImgSrc(working);
+});
+
+document.getElementById('hide').addEventListener('click' , _=>{
+    ipcRenderer.send('hide');
+});
+
+document.getElementById('play-pause').addEventListener('click' , _=>{
+    working = !working;
+    renderImgSrc(working);
+    ipcRenderer.send('timer-state-change' , {working});
+})
+
+function renderImgSrc(working){
+    let src;
+    let playPoint = document.getElementById('playPoint');
+    if(working){
         src="../src/img/stop.svg";
+        playPoint.className = 'glow';
     }else{
         src="../src/img/play.svg";
+        playPoint.className = 'not-glow';
     }
+
     ReactDOM.render(
         React.createElement(
             "img",
-            {src , onClick:onClick}
+            {src , id:'playStop'}
         )
         ,document.getElementById('play-pause')
     )
-});
+}
 
 function onClick(evt){
     working = !working;

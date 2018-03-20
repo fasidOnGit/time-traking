@@ -25,8 +25,8 @@ function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 400, height: 400})
   widget = new BrowserWindow({
-    width:120,
-    height:35,
+    width:130,
+    height:38,
     x:size.width - 100,
     y:size.height - 100,
     resizable:false,
@@ -38,8 +38,7 @@ function createWindow () {
     alwaysOnTop:true,
     show:true,
     frame:false,
-    backgroundColor:'#34495e',
-    parent:mainWindow
+    backgroundColor:'#34495e'
   });
   widget.setAlwaysOnTop(true);
   widget.setSkipTaskbar(true);
@@ -49,7 +48,7 @@ function createWindow () {
     slashes: true
   });
   // widget.loadURL(`file://${__dirname}/renderer/widget.html`);
-  widget.loadURL(widgetUrl);
+  
   const label = electron.app.getName();
   
   // and load the index.html of the app.
@@ -59,6 +58,10 @@ function createWindow () {
     slashes: true
   });
   mainWindow.loadURL(startUrl);
+
+  mainWindow.webContents.on('did-finish-load' , _=>{
+    widget.loadURL(widgetUrl);
+  })
   
   //Template for the Menu
   const template = [
@@ -122,16 +125,17 @@ function createWindow () {
 
   ipc.on('start' , (event , args)=>{
     console.log('received')
-    console.log(args)
   })
   ipc.on('timer' , (event , args) => {
-    console.log(args.start.timer.hours, args.start.timer.minutes);
     widgetWebContent.send("timer-start" , args.start)
   });
+  ipc.on('hide' , (event)=>{
+    widgetShow = !widgetShow;
+    hide(widget);
+  });
   ipc.on('timer-state-change', (event, args) =>{
-    console.log(args);
     mainWindow.webContents.send("timer-state-change" , args);
-  })
+  });
 }
 
 // This method will be called when Electron has finished

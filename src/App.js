@@ -75,14 +75,23 @@ class App extends Component {
       this.props.actions.isWorking(this.state.working)
       this.props.actions.saveTimer('end', this.state.end);
     });
-    console.log('stopped',this.props)
   }
   componentDidMount(){
     this.props.actions.loadTimer();
     this.setState({
       companyTime: momentTz().tz('Asia/Manila').format('hh:m A')
     })
-    // ipc.send('countdown-start');
+    this.props.ipc.on('timer-state-change' , (event, args)=>{
+      this.setState({
+        working: args.working
+      });
+      if(args.working){
+        this.onClick()
+      }else{
+        this.stopWorking()
+      }
+      
+    });
   }
   render() {
     return (
@@ -109,7 +118,6 @@ class App extends Component {
 
 
 function mapStateToProps(state, ownProps){
-  console.log(state.start)
   return {
     ...state.start
   };

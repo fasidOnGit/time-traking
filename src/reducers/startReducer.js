@@ -4,7 +4,6 @@ import initialState from './initialState';
 export default function startReducer(state=initialState , action){
     switch (action.type) {
         case types.START_WORKING_SUCCESS:
-        console.log(action);
             return   {...state , ...{timer:action.timer}};
         
         case types.IS_WORKING:
