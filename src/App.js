@@ -5,14 +5,14 @@ import stop from './img/stop.svg';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import moment from 'moment';
+import momentTz from 'moment-timezone';
 import * as startActions  from './actions/startWorkingActions';
-import * as startEndActions from './actions/startEndWorkAction';
 import timer from './timer';
 import './App.css';
 
-//workaround for accessing Electron modules;
-const electron = window.require('electron');
-const ipc = electron.ipcRenderer;
+// //workaround for accessing Electron modules;
+// const electron = window.require('electron');
+// const ipc = electron.ipcRenderer;
 
 class App extends Component {
   constructor(props, context){
@@ -30,27 +30,25 @@ class App extends Component {
     this.startWorking = this.startWorking.bind(this);
     this.stopWorking = this.stopWorking.bind(this);
     this.onClick = this.onClick.bind(this);
-    this.isWorking = this.isWorking.bind(this);
+    this.checkTime = this.checkTime.bind(this);
     this.timer = this.timer;
   }
 
   timer = '';
   onClick(){
-    this.isWorking();
     let state = JSON.parse(JSON.stringify(this.state));
     state.start = (state.start)? state.start : moment();
     state.working = true;
     this.setState(state , ()=>{
-      this.props.seActions.startWork(this.state.start);
+      this.props.actions.startWork(this.state.start);
       this.props.actions.isWorking(this.state.working)
-      console.log(this.props)
+      this.props.actions.saveTimer('start' , this.state.start);
     });
     this.startWorking();
   }
-  isWorking(){
-    const newState = toggleWorking(this.state);
-    console.log(newState)
-    this.setState({working: true});
+  checkTime(time){
+    let timeInt = parseInt(time, 10);
+    return timeInt ? true : false;
   }
   startWorking(){
     this.timer = setInterval(()=>{
@@ -73,17 +71,18 @@ class App extends Component {
       working : false,
       end:moment()
     }, _=>{
-      this.props.seActions.endWork(this.state.end);
+      this.props.actions.endWork(this.state.end);
       this.props.actions.isWorking(this.state.working)
+      this.props.actions.saveTimer('end', this.state.end);
     });
-    console.log(this.props)
+    console.log('stopped',this.props)
   }
   componentDidMount(){
     this.props.actions.loadTimer();
-    ipc.send('countdown-start');
-  }
-  componentWillUnmount(){
-    console.log('unmounted')
+    this.setState({
+      companyTime: momentTz().tz('Asia/Manila').format('hh:m A')
+    })
+    // ipc.send('countdown-start');
   }
   render() {
     return (
@@ -98,26 +97,26 @@ class App extends Component {
             {!this.state.working && <img src={play} alt="Start Working" onClick={this.onClick}/>}
             {this.state.working && <img src={stop} alt="Stop Working" onClick={this.stopWorking}/>}
           </h1>
+          <div className="today-stats">
+            <h3>Worked Today: {this.checkTime(this.props.timer.hours) && this.props.timer.hours + 'hr'} {this.props.timer.minutes}m</h3>
+            <h5>Company Time: {this.state.companyTime} GMT+08:00</h5>
+          </div>
         </main>
       </div>
     );
   }
 }
 
-function toggleWorking(state){
-  let newState = JSON.parse(JSON.stringify(state));
-  newState.working = !state.working;
-  return newState;
-}
 
 function mapStateToProps(state, ownProps){
-  console.log(state)
-  return Object.assign({}, state.start , state.startEnd , state.isWorking);
+  console.log(state.start)
+  return {
+    ...state.start
+  };
 }
 function mapDispatchToProps(dispatch){
   return {
-    actions: bindActionCreators(startActions, dispatch),
-    seActions:bindActionCreators(startEndActions,dispatch)
+    actions: bindActionCreators(startActions, dispatch)
   }
 }
 

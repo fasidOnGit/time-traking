@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <style>
+    body {
+        background:  #34495e; 
+      -webkit-user-select: none;
+      -webkit-app-region: drag;
+    }
+    .main{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+    }
+  </style>
+</head>
+<body>
+    <div class="main">
+        <img src="../src/img/dragndrop.svg">
+        <div id="play-pause"></div>
+        <span id="timer"></span>
+        &nbsp;<img style="height:.9em;width:.8em;" src="../src/img/clear.svg">
+    </div>
+  <script src="./widget.js"></script>
+</body>
+</html>

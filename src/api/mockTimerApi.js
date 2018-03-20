@@ -4,7 +4,7 @@ import delay from './delay';
 // It uses setTimeout to simulate the delay of an AJAX call.
 // All calls return promises.
 let courses = {
-    start : "hi",
+    start : "",
     end: ""
 };
 
@@ -29,7 +29,7 @@ class StoreAPI {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
           courses = timer;
-        resolve(courses);
+        resolve(Object.assign({},courses));
       }, delay);
     });
   }

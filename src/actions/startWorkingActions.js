@@ -10,6 +10,9 @@ export function isWorking(working){
 export function loadTimerSuccess(timer){
     return {type: types.LOAD_ALL_TIMER, timer};
 }
+export function savedTimerSuccess(timer){
+    return {type: types.SAVED_SELECTED_TIMER, timer};
+}
 
 export function loadTimer(){
     return function(dispatch){
@@ -19,4 +22,21 @@ export function loadTimer(){
             throw(err);
         })
     }
+}
+
+export function saveTimer(flag, time){
+    return function(dispatch){
+        StoreApi.saveTime(flag , time).then(data =>{
+            dispatch(savedTimerSuccess(data));
+        }).catch(err => {
+            throw(err);
+        })
+    }
+}
+
+export function startWork(time){
+    return {type: types.START_WORK, time}
+}
+export function endWork(time){
+    return {type: types.END_WORK, time}
 }

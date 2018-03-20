@@ -21,7 +21,13 @@
 .App-intro {
   font-size: large;
 }
-
+.today-stats{
+  text-align: start;
+  padding: 0.7px 2px;
+  background: #d2d9f5;
+  font-size: .8rem;
+  color:#7783a3;
+}
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

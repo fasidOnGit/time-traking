@@ -11,16 +11,45 @@ const ipc = electron.ipcMain;
 const path = require('path')
 const url = require('url')
 
+
 const config = require('./src/config/config').config;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
+let mainWindow , widget;
+let widgetShow = true;
 
 function createWindow () {
+  const atomScreen = electron.screen;
+  const size = atomScreen.getPrimaryDisplay().workAreaSize;
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 400, height: 400})
-  
+  widget = new BrowserWindow({
+    width:120,
+    height:35,
+    x:size.width - 100,
+    y:size.height - 100,
+    resizable:false,
+    transparent: false,
+    frame: false,
+    minimizable: false,
+    maximizable :false,
+    closable:false,
+    alwaysOnTop:true,
+    show:true,
+    frame:false,
+    backgroundColor:'#34495e',
+    parent:mainWindow
+  });
+  widget.setAlwaysOnTop(true);
+  widget.setSkipTaskbar(true);
+  const widgetUrl = url.format({
+    pathname: path.join(__dirname, '/renderer/widget.html'),
+    protocol: 'file:',
+    slashes: true
+  });
+  // widget.loadURL(`file://${__dirname}/renderer/widget.html`);
+  widget.loadURL(widgetUrl);
   const label = electron.app.getName();
   
   // and load the index.html of the app.
@@ -37,7 +66,15 @@ function createWindow () {
       label,
       submenu:[{
         label: `Show/Hide Widget`,
-        click: () => console.log("widget show"),
+        click: () => {
+          widgetShow = !widgetShow;
+          if(widgetShow){
+            show(widget);
+          }else{
+            hide(widget);
+          }
+          
+        },
         role: 'widget'
       },
       {
@@ -45,11 +82,20 @@ function createWindow () {
       },
       {
         label:'Quit',
-        click: _=> app.quit(),
+        click: _=> {
+          app.quit();
+          widget.destroy();
+        },
         accelerator: 'Cmd+Q'
       }]
     }
   ];
+
+  let widgetWebContent;
+
+  widget.webContents.on('did-finish-load' , ()=>{
+    widgetWebContent = widget.webContents;
+  });
 
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
@@ -60,17 +106,31 @@ function createWindow () {
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
+    console.log('closed')
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
-    mainWindow = null
+    mainWindow = null;
+    widget.destroy();
+  })
+  widget.on('closed', function () {
+    // Dereference the window object, usually you would store windows
+    // in an array if your app supports multi windows, this is the time
+    // when you should delete the corresponding element.
+    widget = null;
   })
 
-  ipc.on('countdown-start' , ()=>{
+  ipc.on('start' , (event , args)=>{
     console.log('received')
+    console.log(args)
   })
-  ipc.on('timer' , (event , timer) => {
-    console.log(timer);
+  ipc.on('timer' , (event , args) => {
+    console.log(args.start.timer.hours, args.start.timer.minutes);
+    widgetWebContent.send("timer-start" , args.start)
+  });
+  ipc.on('timer-state-change', (event, args) =>{
+    console.log(args);
+    mainWindow.webContents.send("timer-state-change" , args);
   })
 }
 
@@ -95,3 +155,10 @@ app.on('activate', function () {
     createWindow()
   }
 })
+
+function hide(win){
+  return win.hide();
+}
+function show(win){
+  return win.show();
+}
