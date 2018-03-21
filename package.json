@@ -4,7 +4,7 @@
   "productName": "Timer Tracker",
   "author": "Kader Mohideen Fasid",
   "description": "A Time Tracker App that tracks your work time.",
-  "main": "electronStarter.js",
+  "main": "build/electron.js",
   "private": true,
   "homepage": "./",
   "dependencies": {
@@ -22,51 +22,30 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "electron": "electron .",
-    "react-start": "BROWSER=none react-scripts start",
+    "react-start": "react-scripts start",
     "start": "concurrently \"npm run react-start\" \"wait-on http://localhost:3000/ && npm run electron\"",
     "pack": "build --dir",
-    "release": "build",
+    "electron-pack": "build -w --em.main=build/electron.js",
+    "preelectron-pack": "npm run build",
+    "release": "electron-builder",
     "dist": "npm run build && build",
     "postinstall": "install-app-deps"
   },
   "build": {
-    "appId": "com.electron.electron-with-create-react-app",
-    "directories": {
+    "appId": "com.example.electron-cra",
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ],
+    "directories":{
+      "buildResources": "assets",
       "output":"./dist"
     },
-    "files": [
-      "app/**",
-      "!assets/**${/*}",
-      "!**/node_modules/*/build/**/*.node",
-      "**/node_modules/*/build/**/*.node",
-      "!**/node_modules/*/bin/**/*.node",
-      "!**/node_modules/*/deps${/*}",
-      "!**/node_modules/**/{*.cc,*.obj,*.pdb}",
-      "**/node_modules/node-pre-gyp${/*}"
-    ],
-    "mac": {
-      "category": "public.app-category.business"
-    },
-    "dmg":{
-      "contents":[{
-        "x":110,
-        "y":150
-      },{
-        "x":240,
-        "y":150,
-        "type":"link",
-        "path":"/Applications"
-      }]
-    },
-    "win":{
-      "icon":"assets/icon.ico",
-      "target":"nsis"
-    },
-    "nsis":{
-      "allowToChangeInstallationDirectory":true,
-      "oneClick":false,
-      "perMachine":true
-    }
+    "win" : {
+      "target": "nsis",
+      "icon" : "assets/build.ico",
+      "publisherName": "Fasid"
+  }
   },
   "devDependencies": {
     "concurrently": "^3.5.1",

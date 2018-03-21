@@ -1,0 +1,15 @@
+directories:
+  output: ./dist
+  buildResources: assets
+files:
+  - build/**/*
+  - node_modules/**/*
+extraMetadata:
+  main: build/electron.js
+appId: com.example.electron-cra
+win:
+  target: nsis
+  icon: assets/build.ico
+  publisherName: Fasid
+extends: react-cra
+electronVersion: 1.8.4
