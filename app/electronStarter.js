@@ -12,7 +12,7 @@ const path = require('path')
 const url = require('url')
 
 
-const config = require('./src/config/config').config;
+const config = require('../src/config/config').config;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -50,10 +50,10 @@ function createWindow () {
   // widget.loadURL(`file://${__dirname}/renderer/widget.html`);
   
   const label = electron.app.getName();
-  
+  config.dev.entryPoint = null
   // and load the index.html of the app.
   const startUrl = config.dev.entryPoint || url.format({
-    pathname: path.join(__dirname, '/../build/index.html'),
+    pathname: path.join(__dirname, '/build/index.html'),
     protocol: 'file:',
     slashes: true
   });

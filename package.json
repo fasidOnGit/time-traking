@@ -1,8 +1,12 @@
 {
   "name": "time-tracker",
   "version": "0.1.0",
+  "productName": "Timer Tracker",
+  "author": "Kader Mohideen Fasid",
+  "description": "A Time Tracker App that tracks your work time.",
   "main": "electronStarter.js",
   "private": true,
+  "homepage": "./",
   "dependencies": {
     "moment": "^2.21.0",
     "moment-timezone": "^0.5.14",
@@ -19,11 +23,55 @@
     "eject": "react-scripts eject",
     "electron": "electron .",
     "react-start": "BROWSER=none react-scripts start",
-    "start": "concurrently \"npm run react-start\" \"wait-on http://localhost:3000/ && npm run electron\""
+    "start": "concurrently \"npm run react-start\" \"wait-on http://localhost:3000/ && npm run electron\"",
+    "pack": "build --dir",
+    "release": "build",
+    "dist": "npm run build && build",
+    "postinstall": "install-app-deps"
+  },
+  "build": {
+    "appId": "com.electron.electron-with-create-react-app",
+    "directories": {
+      "output":"./dist"
+    },
+    "files": [
+      "app/**",
+      "!assets/**${/*}",
+      "!**/node_modules/*/build/**/*.node",
+      "**/node_modules/*/build/**/*.node",
+      "!**/node_modules/*/bin/**/*.node",
+      "!**/node_modules/*/deps${/*}",
+      "!**/node_modules/**/{*.cc,*.obj,*.pdb}",
+      "**/node_modules/node-pre-gyp${/*}"
+    ],
+    "mac": {
+      "category": "public.app-category.business"
+    },
+    "dmg":{
+      "contents":[{
+        "x":110,
+        "y":150
+      },{
+        "x":240,
+        "y":150,
+        "type":"link",
+        "path":"/Applications"
+      }]
+    },
+    "win":{
+      "icon":"assets/icon.ico",
+      "target":"nsis"
+    },
+    "nsis":{
+      "allowToChangeInstallationDirectory":true,
+      "oneClick":false,
+      "perMachine":true
+    }
   },
   "devDependencies": {
     "concurrently": "^3.5.1",
     "electron": "^1.8.4",
+    "electron-builder": "^20.5.1",
     "redux-immutable-state-invariant": "^2.1.0",
     "redux-mock-store": "^1.5.1",
     "wait-on": "^2.1.0"
